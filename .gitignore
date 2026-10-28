@@ -11,3 +11,4 @@ staticfiles/
 .env
 .env.*
 !.env.example
+config/settings_backup.py
