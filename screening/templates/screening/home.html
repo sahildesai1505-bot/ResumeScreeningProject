@@ -1,0 +1,298 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResumeAI | Smart Recruitment</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f8ff;
+            color: #172033;
+        }
+        header {
+            background: white;
+            border-bottom: 1px solid #e4eaf4;
+            padding: 18px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .brand { font-size: 25px; font-weight: 800; color: #2563eb; }
+        nav a {
+            margin-left: 20px;
+            color: #334155;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .hero {
+            padding: 65px 7%;
+            background: linear-gradient(120deg, #e8f0ff, #f8fbff);
+        }
+        .hero h1 {
+            max-width: 750px;
+            font-size: clamp(32px, 5vw, 52px);
+            line-height: 1.15;
+            margin: 0 0 18px;
+        }
+        .hero p { max-width: 650px; color: #526078; line-height: 1.7; }
+        .button {
+            display: inline-block;
+            border: 0;
+            border-radius: 9px;
+            padding: 12px 18px;
+            background: #2563eb;
+            color: white;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        main { max-width: 1150px; margin: auto; padding: 35px 20px 70px; }
+        section { margin-bottom: 45px; scroll-margin-top: 20px; }
+        .section-heading { margin-bottom: 20px; }
+        .section-heading h2 { font-size: 29px; margin-bottom: 8px; }
+        .muted { color: #64748b; line-height: 1.6; }
+        .messages { margin-bottom: 25px; }
+        .message {
+            padding: 13px 16px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #e0f2fe;
+            color: #075985;
+        }
+        .message.error { background: #fee2e2; color: #991b1b; }
+        .job-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 20px;
+        }
+        .card, .form-card {
+            background: white;
+            border: 1px solid #e4eaf4;
+            border-radius: 15px;
+            padding: 24px;
+            box-shadow: 0 5px 20px rgba(30, 64, 175, 0.04);
+        }
+        .card h3 { margin-top: 0; font-size: 21px; }
+        .company { color: #2563eb; font-weight: 700; }
+        .tag {
+            display: inline-block;
+            padding: 6px 9px;
+            border-radius: 7px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 12px;
+            margin: 3px 3px 3px 0;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+        .field { margin-bottom: 15px; }
+        .field.full { grid-column: 1 / -1; }
+        label { display: block; font-weight: 700; margin-bottom: 7px; font-size: 14px; }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font: inherit;
+            background: #fff;
+        }
+        textarea { min-height: 110px; resize: vertical; }
+        input:focus, textarea:focus {
+            outline: 2px solid #bfdbfe;
+            border-color: #2563eb;
+        }
+        .form-note { font-size: 13px; color: #64748b; margin-top: 10px; }
+        footer {
+            background: #111827;
+            color: #cbd5e1;
+            padding: 30px 7%;
+            text-align: center;
+        }
+        @media (max-width: 650px) {
+            header { padding: 17px 5%; }
+            nav a { margin-left: 0; margin-right: 12px; }
+            .hero { padding: 45px 5%; }
+            main { padding: 25px 14px 45px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .field.full { grid-column: auto; }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="brand">ResumeAI</div>
+    <nav>
+        <a href="#jobs">Find Jobs</a>
+        <a href="#post-job">Post a Job</a>
+    </nav>
+</header>
+
+<div class="hero">
+    <h1>Find the right talent. Discover your next opportunity.</h1>
+    <p>
+        ResumeAI connects employers and candidates with a simple recruitment
+        platform and AI-assisted resume matching.
+    </p>
+    <a class="button" href="#jobs">Explore Jobs</a>
+    <a class="button" href="#post-job" style="margin-left:8px;background:#0f172a;">Hire Talent</a>
+</div>
+
+<main>
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="message {% if message.tags == 'error' %}error{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section id="jobs">
+        <div class="section-heading">
+            <h2>Latest Opportunities</h2>
+            <p class="muted">Explore active openings and apply with your PDF resume.</p>
+        </div>
+
+        <div class="job-grid">
+            {% for job in jobs %}
+                <article class="card">
+                    <h3>{{ job.title }}</h3>
+                    <p class="company">{{ job.company.name }}</p>
+                    <p class="muted">📍 {{ job.location }}</p>
+
+                    {% if job.salary %}
+                        <p><strong>Salary:</strong> {{ job.salary }}</p>
+                    {% endif %}
+
+                    <p>{{ job.description|truncatewords:30 }}</p>
+
+                    <div>
+                        {% for skill in job.required_skills|cut:" "|cut:" "|default:"" %}
+                        {% endfor %}
+                        <span class="tag">{{ job.required_skills|truncatewords:15 }}</span>
+                    </div>
+
+                    <p class="muted">Posted {{ job.posted_at|date:"d M Y" }}</p>
+
+                    <button class="button" type="button"
+                        onclick="document.getElementById('apply-{{ job.id }}').hidden = !document.getElementById('apply-{{ job.id }}').hidden">
+                        Apply Now
+                    </button>
+
+                    <div id="apply-{{ job.id }}" hidden style="margin-top:22px;">
+                        <h3>Apply for {{ job.title }}</h3>
+                        <form method="post"
+                              action="{% url 'apply_job' job.id %}"
+                              enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="field">
+                                <label for="name-{{ job.id }}">Full name</label>
+                                <input id="name-{{ job.id }}" name="candidate_name"
+                                       maxlength="150" required>
+                            </div>
+                            <div class="field">
+                                <label for="email-{{ job.id }}">Email</label>
+                                <input id="email-{{ job.id }}" name="candidate_email"
+                                       type="email" required>
+                            </div>
+                            <div class="field">
+                                <label for="phone-{{ job.id }}">Phone number</label>
+                                <input id="phone-{{ job.id }}" name="candidate_phone"
+                                       type="tel" maxlength="20" required>
+                            </div>
+                            <div class="field">
+                                <label for="resume-{{ job.id }}">Resume (PDF, max 5 MB)</label>
+                                <input id="resume-{{ job.id }}" name="resume"
+                                       type="file" accept=".pdf,application/pdf"
+                                       required>
+                            </div>
+                            <button class="button" type="submit">Submit Application</button>
+                        </form>
+                    </div>
+                </article>
+            {% empty %}
+                <div class="card">
+                    <h3>No jobs posted yet</h3>
+                    <p class="muted">Be the first company to publish an opportunity using the form below.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section id="post-job">
+        <div class="section-heading">
+            <h2>Post a Job</h2>
+            <p class="muted">
+                Employers can submit a job without creating an account.
+                Required fields are marked by the browser.
+            </p>
+        </div>
+
+        <div class="form-card">
+            <form method="post" action="{% url 'post_job' %}">
+                {% csrf_token %}
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="company_name">Company name *</label>
+                        <input id="company_name" name="company_name"
+                               maxlength="200" required>
+                    </div>
+                    <div class="field">
+                        <label for="company_email">Company email *</label>
+                        <input id="company_email" name="company_email"
+                               type="email" required>
+                    </div>
+                    <div class="field full">
+                        <label for="company_description">About the company</label>
+                        <textarea id="company_description" name="company_description"></textarea>
+                    </div>
+                    <div class="field">
+                        <label for="title">Job title *</label>
+                        <input id="title" name="title" maxlength="200" required>
+                    </div>
+                    <div class="field">
+                        <label for="location">Job location *</label>
+                        <input id="location" name="location" maxlength="200" required>
+                    </div>
+                    <div class="field">
+                        <label for="salary">Salary or salary range</label>
+                        <input id="salary" name="salary" maxlength="100"
+                               placeholder="e.g. ₹3–5 LPA">
+                    </div>
+                    <div class="field">
+                        <label for="required_skills">Required skills *</label>
+                        <input id="required_skills" name="required_skills"
+                               placeholder="Python, Django, SQL" required>
+                    </div>
+                    <div class="field full">
+                        <label for="description">Job description *</label>
+                        <textarea id="description" name="description"
+                                  required></textarea>
+                    </div>
+                </div>
+                <button class="button" type="submit">Publish Job</button>
+                <p class="form-note">
+                    ResumeAI uses automated text similarity to assist screening.
+                    Similarity scores are not guarantees of candidate suitability.
+                </p>
+            </form>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <strong>ResumeAI</strong>
+    <p>Smarter recruitment through AI-assisted resume matching.</p>
+</footer>
+</body>
+</html>

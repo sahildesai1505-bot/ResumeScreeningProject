@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResumeAI | Employer Dashboard</title>
+    <style>
+        :root {
+            --blue: #2563eb;
+            --blue-dark: #1e40af;
+            --background: #f4f7fb;
+            --text: #172033;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --white: #ffffff;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 18px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            color: var(--blue);
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .brand span {
+            color: var(--text);
+            font-weight: 400;
+        }
+
+        header a, .button {
+            text-decoration: none;
+            border-radius: 8px;
+            padding: 11px 16px;
+            display: inline-block;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        header a {
+            color: var(--blue);
+            border: 1px solid var(--border);
+        }
+
+        main {
+            max-width: 1450px;
+            margin: 0 auto;
+            padding: 32px 5%;
+        }
+
+        .page-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        h1 { margin: 0 0 8px; font-size: 30px; }
+        .subtitle { margin: 0; color: var(--muted); }
+
+        .button {
+            background: var(--blue);
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .button:hover { background: var(--blue-dark); }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card, .panel {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.035);
+        }
+
+        .stat-card { padding: 22px; }
+        .stat-label { color: var(--muted); font-size: 14px; }
+        .stat-value { font-size: 32px; font-weight: 800; margin-top: 12px; }
+        .stat-note { color: var(--muted); font-size: 12px; margin-top: 8px; }
+
+        .panel { margin-bottom: 26px; overflow: hidden; }
+        .panel-heading { padding: 22px 24px; border-bottom: 1px solid var(--border); }
+        .panel-heading h2 { margin: 0 0 6px; font-size: 19px; }
+        .panel-heading p { margin: 0; color: var(--muted); font-size: 13px; }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        select {
+            padding: 11px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            color: var(--text);
+            min-width: 180px;
+        }
+
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th {
+            background: #f8fafc;
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        th, td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        td { font-size: 14px; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background: #f8fbff; }
+
+        .candidate-name { font-weight: 700; }
+        .subtext { color: var(--muted); font-size: 12px; margin-top: 5px; }
+
+        .score {
+            display: inline-block;
+            background: #eff6ff;
+            color: #1d4ed8;
+            padding: 6px 10px;
+            border-radius: 7px;
+            font-weight: 800;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 9px;
+            border-radius: 20px;
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .empty { text-align: center; padding: 35px; color: var(--muted); }
+
+        footer {
+            text-align: center;
+            color: var(--muted);
+            padding: 25px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 1000px) {
+            .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 550px) {
+            main { padding: 24px 4%; }
+            .stats { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .stat-card { padding: 15px; }
+            .stat-value { font-size: 26px; }
+            h1 { font-size: 25px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">ResumeAI <span>| Employer</span></div>
+        <a href="{% url 'home' %}">View Public Website ↗</a>
+    </header>
+
+    <main>
+        <section class="page-heading">
+            <div>
+                <h1>Employer Dashboard</h1>
+                <p class="subtitle">Manage jobs, review applications, and discover potential candidates.</p>
+            </div>
+            <a class="button" href="{% url 'home' %}#post-job">+ Post a Job</a>
+        </section>
+
+        <section class="stats">
+            <div class="stat-card">
+                <div class="stat-label">Total Jobs</div>
+                <div class="stat-value">{{ total_jobs }}</div>
+                <div class="stat-note">All posted positions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Jobs</div>
+                <div class="stat-value">{{ active_jobs }}</div>
+                <div class="stat-note">Currently accepting applications</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Applications to Review</div>
+                <div class="stat-value">{{ pending_applications }}</div>
+                <div class="stat-note">Received or under review</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Shortlisted Candidates</div>
+                <div class="stat-value">{{ shortlisted_applications }}</div>
+                <div class="stat-note">Selected for further consideration</div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-heading">
+                <h2>Candidate Applications</h2>
+                <p>Ranked by resume similarity score. Scores support review and are not hiring decisions.</p>
+            </div>
+
+            <form method="get" class="filters">
+                <select name="job">
+                    <option value="">All jobs</option>
+                    {% for job in jobs %}
+                    <option value="{{ job.id }}"
+                        {% if selected_job == job.id|stringformat:"s" %}selected{% endif %}>
+                        {{ job.title }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <select name="status">
+                    <option value="">All statuses</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}"
+                        {% if selected_status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <button class="button" type="submit">Apply Filters</button>
+                <a class="button" href="{% url 'employer_dashboard' %}" style="background:#eaf0f8;color:#334155;">Clear</a>
+            </form>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Candidate</th>
+                            <th>Position</th>
+                            <th>Similarity</th>
+                            <th>Status</th>
+                            <th>Applied</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+{% for application in applications %}
+<tr>
+    <td>
+        <div class="candidate-name">{{ application.candidate_name }}</div>
+        <div class="subtext">{{ application.candidate_email }}</div>
+        <div class="subtext">{{ application.candidate_phone }}</div>
+        
+    </td>
+
+    <td>
+        <div class="candidate-name">{{ application.job.title }}</div>
+        <div class="subtext">{{ application.job.company.name }}</div>
+    </td>
+
+    <td>
+        <span class="score">{{ application.similarity_score|floatformat:2 }}%</span>
+    </td>
+
+    <td>
+        <form method="post"
+              action="{% url 'update_application_status' application.id %}">
+            {% csrf_token %}
+
+            <select name="status" required
+                    style="padding:8px; border:1px solid #dbe3ef; border-radius:6px; width:100%; margin-bottom:8px;">
+                {% for status_value, status_label in status_choices %}
+                    <option value="{{ status_value }}"
+                        {% if application.status == status_value %}selected{% endif %}>
+                        {{ status_label }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit"
+                    style="padding:8px 12px; background:#2563eb; color:white; border:0; border-radius:6px; cursor:pointer;">
+                Save Status
+            </button>
+        </form>
+    </td>
+
+    <td>{{ application.applied_at|date:"d M Y, H:i" }}</td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="5" class="empty">No applications match your filters yet.</td>
+</tr>
+{% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-heading">
+                <h2>Posted Jobs</h2>
+                <p>Review your current recruitment listings and application totals.</p>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Company</th>
+                            <th>Location</th>
+                            <th>Applications</th>
+                            <th>Listing Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in jobs %}
+                        <tr>
+                            <td class="candidate-name">{{ job.title }}</td>
+                            <td>{{ job.company.name }}</td>
+                            <td>{{ job.location }}</td>
+                            <td>{{ job.application_count }}</td>
+                            <td>
+                                {% if job.is_active %}
+                                <span class="status">Active</span>
+                                {% else %}
+                                <span class="status">Inactive</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" class="empty">No jobs have been posted yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>ResumeAI · Professional Recruitment Management</footer>
+</body>
+</html>
+

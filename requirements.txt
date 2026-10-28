@@ -1,0 +1,7 @@
+Django==6.1.2
+pypdf==6.21.2
+scikit-learn==1.9.1
+gunicorn
+whitenoise
+dj-database-url
+psycopg[binary]
